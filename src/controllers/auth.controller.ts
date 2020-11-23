@@ -1,9 +1,12 @@
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
+import * as moment from "moment";
 import EmailAuthentication from "../entity/EmailAuthentication";
 import User from "../entity/User";
 import logger from "../lib/logger";
-import { validateRegister } from "../lib/validation/auth";
+import { validateRegister, validateSendAuthCode } from "../lib/validation/auth";
+import { v4 as uuidv4 } from "uuid";
+import sendEmail from "../lib/util/sendEmail";
 
 const register = async (req: Request, res: Response) => {
   if (!validateRegister(req, res)) return;
@@ -63,6 +66,61 @@ const register = async (req: Request, res: Response) => {
   }
 };
 
+const sendAuthCode = async (req: Request, res: Response) => {
+  if (!validateSendAuthCode(req, res)) return;
+
+  type RequestBody = {
+    body: {
+      email: string;
+    };
+  };
+
+  const {
+    body: { email }
+  }: RequestBody = req;
+  const authCode = uuidv4();
+  console.log(authCode);
+
+  sendEmail(email, "FDT 인증 코드입니다.", authCode)
+    .then(async () => {
+      try {
+        const EXPIRED_MINUTE = 10;
+        const emailAuthRepo = getRepository(EmailAuthentication);
+        const emailAuthentication: EmailAuthentication | undefined = await emailAuthRepo.findOne({ email });
+        const newEmailAuthentication: EmailAuthentication = new EmailAuthentication();
+
+        if (emailAuthentication) {
+          emailAuthentication.authCode = authCode;
+          emailAuthentication.expireAt = new Date(moment().add(EXPIRED_MINUTE, "minutes").format("YYYY-MM-DDTHH:mm:ss"));
+
+          await emailAuthRepo.update(emailAuthentication.idx, emailAuthentication);
+          return;
+        }
+
+        newEmailAuthentication.email = email;
+        newEmailAuthentication.authCode = authCode;
+        newEmailAuthentication.expireAt = new Date(moment().add(EXPIRED_MINUTE, "minutes").format("YYYY-MM-DDTHH:mm:ss"));
+
+        await emailAuthRepo.save(newEmailAuthentication);
+
+        logger.green("[POST] 인증 코드 전송 성공.");
+        return res.status(200).json({
+          status: 200,
+          message: "전송 성공."
+        });
+      } catch (err) {
+        logger.red("[POST] 인증 코드 전송 서버 오류.", err.message);
+        return res.status(500).json({
+          status: 500,
+          message: "서버 오류."
+        });
+      }
+    })
+    .catch((err) => console.log(err));
+  res.status(200).end();
+};
+
 export default {
-  register
+  register,
+  sendAuthCode
 };
