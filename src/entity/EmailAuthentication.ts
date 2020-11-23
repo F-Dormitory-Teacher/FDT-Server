@@ -14,6 +14,9 @@ export default class EmailAuthentication extends BaseEntity {
   @Column({ nullable: false, default: false })
   isCertified: boolean;
 
-  @Column("timestampz")
+  @Column({ nullable: false })
+  authCode: string;
+
+  @Column("timestamp")
   expireAt: Date;
 }
