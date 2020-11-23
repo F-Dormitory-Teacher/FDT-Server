@@ -4,7 +4,7 @@ import * as moment from "moment";
 import EmailAuthentication from "../entity/EmailAuthentication";
 import User from "../entity/User";
 import logger from "../lib/logger";
-import { validateRegister, validateSendAuthCode } from "../lib/validation/auth";
+import { validateCertifyAuthCode, validateRegister, validateSendAuthCode } from "../lib/validation/auth";
 import { v4 as uuidv4 } from "uuid";
 import sendEmail from "../lib/util/sendEmail";
 
@@ -66,6 +66,47 @@ const register = async (req: Request, res: Response) => {
   }
 };
 
+const certifyAuthCode = async (req: Request, res: Response) => {
+  if (!validateCertifyAuthCode(req, res)) return;
+
+  const authCode: string = req.query["auth-code"] as string;
+
+  try {
+    const emailAuthRepo = getRepository(EmailAuthentication);
+    const emailAuthentication: EmailAuthentication | undefined = await emailAuthRepo.findOne({ authCode });
+
+    if (!emailAuthentication) {
+      res.status(404).json({
+        message: "코드 인증 실패."
+      });
+      return;
+    }
+
+    if (moment(Date.now()).isAfter(emailAuthentication.expireAt)) {
+      res.status(409).json({
+        message: "유효기간 만료."
+      });
+      return;
+    }
+
+    emailAuthentication.isCertified = true;
+    emailAuthRepo.save(emailAuthentication);
+
+    logger.green("[POST] 인증 코드 검증 성공.");
+    res.status(200).json({
+      status: 200,
+      message: "검증 성공."
+    });
+    return;
+  } catch (err) {
+    logger.red("[GET] 인증 코드 검증 서버 오류.", err.message);
+    res.status(500).json({
+      status: 500,
+      message: "서버 오류."
+    });
+  }
+};
+
 const sendAuthCode = async (req: Request, res: Response) => {
   if (!validateSendAuthCode(req, res)) return;
 
@@ -79,7 +120,6 @@ const sendAuthCode = async (req: Request, res: Response) => {
     body: { email }
   }: RequestBody = req;
   const authCode = uuidv4();
-  console.log(authCode);
 
   sendEmail(email, "FDT 인증 코드입니다.", authCode)
     .then(async () => {
@@ -93,7 +133,11 @@ const sendAuthCode = async (req: Request, res: Response) => {
           emailAuthentication.authCode = authCode;
           emailAuthentication.expireAt = new Date(moment().add(EXPIRED_MINUTE, "minutes").format("YYYY-MM-DDTHH:mm:ss"));
 
-          await emailAuthRepo.update(emailAuthentication.idx, emailAuthentication);
+          await emailAuthRepo.update(emailAuthentication.authCode, emailAuthentication);
+          res.status(200).json({
+            status: 200,
+            message: "전송 성공."
+          });
           return;
         }
 
@@ -104,23 +148,29 @@ const sendAuthCode = async (req: Request, res: Response) => {
         await emailAuthRepo.save(newEmailAuthentication);
 
         logger.green("[POST] 인증 코드 전송 성공.");
-        return res.status(200).json({
+        res.status(200).json({
           status: 200,
           message: "전송 성공."
         });
+        return;
       } catch (err) {
         logger.red("[POST] 인증 코드 전송 서버 오류.", err.message);
-        return res.status(500).json({
+        res.status(500).json({
           status: 500,
           message: "서버 오류."
         });
+        return;
       }
     })
     .catch((err) => console.log(err));
-  res.status(200).end();
+  res.status(200).json({
+    status: 200,
+    message: "전송 성공."
+  });
 };
 
 export default {
   register,
+  certifyAuthCode,
   sendAuthCode
 };
