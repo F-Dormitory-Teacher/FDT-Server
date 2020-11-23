@@ -1,6 +1,6 @@
 import { Entity, Column, BaseEntity, PrimaryGeneratedColumn, CreateDateColumn } from "typeorm";
 
-@Entity("user")
+@Entity("User")
 export default class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   idx: number;
