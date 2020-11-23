@@ -52,6 +52,8 @@ const register = async (req: Request, res: Response) => {
     user.name = body.name;
     user.pw = body.pw;
 
+    userRepo.save(user);
+
     logger.green("[POST] 회원가입 성공.");
     return res.status(200).json({
       status: 200,
