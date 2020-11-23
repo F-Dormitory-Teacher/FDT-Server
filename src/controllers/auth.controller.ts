@@ -4,9 +4,10 @@ import * as moment from "moment";
 import EmailAuthentication from "../entity/EmailAuthentication";
 import User from "../entity/User";
 import logger from "../lib/logger";
-import { validateCertifyAuthCode, validateRegister, validateSendAuthCode } from "../lib/validation/auth";
+import { validateCertifyAuthCode, validateLogin, validateRegister, validateSendAuthCode } from "../lib/validation/auth";
 import { v4 as uuidv4 } from "uuid";
 import sendEmail from "../lib/util/sendEmail";
+import { createToken } from "../lib/token";
 
 const register = async (req: Request, res: Response) => {
   if (!validateRegister(req, res)) return;
@@ -62,6 +63,46 @@ const register = async (req: Request, res: Response) => {
   } catch (err) {
     logger.red("[POST] 회원가입 서버 오류.", err.message);
     return res.status(500).json({
+      status: 500,
+      message: "서버 오류."
+    });
+  }
+};
+
+const login = async (req: Request, res: Response) => {
+  if (!validateLogin(req, res)) return;
+
+  type RequestBody = {
+    body: {
+      email: string;
+      pw: string;
+    };
+  };
+
+  const {
+    body: { email, pw }
+  }: RequestBody = req;
+
+  try {
+    const userRepo = getRepository(User);
+    const user: User | undefined = await userRepo.findOne({ email, pw });
+
+    if (!user) {
+      logger.yellow("[POST] 회원가입 인증 안된 이메일.");
+      res.status(404).json({
+        message: "일치하는 계정을 찾을 수 없음."
+      });
+      return;
+    }
+    logger.green("[POST] 로그인 성공.");
+    res.status(200).json({
+      status: 200,
+      message: "로그인 성공.",
+      accessToken: await createToken(email)
+    });
+  } catch (err) {
+    logger.red("[POST] 로그인 서버 오류.", err.message);
+    res.status(500).json({
       status: 500,
       message: "서버 오류."
     });
@@ -173,6 +214,7 @@ const sendAuthCode = async (req: Request, res: Response) => {
 
 export default {
   register,
+  login,
   certifyAuthCode,
   sendAuthCode
 };
