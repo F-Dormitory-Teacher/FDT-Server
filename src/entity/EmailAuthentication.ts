@@ -1,4 +1,4 @@
-import { Entity, Column, BaseEntity, PrimaryGeneratedColumn, PrimaryColumn } from "typeorm";
+import { Entity, Column, BaseEntity, PrimaryColumn } from "typeorm";
 
 @Entity("EmailAuthentication")
 export default class EmailAuthentication extends BaseEntity {
