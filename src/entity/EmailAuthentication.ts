@@ -1,7 +1,7 @@
 import { Entity, Column, BaseEntity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity("user")
-export default class User extends BaseEntity {
+@Entity("EmailAuthentication")
+export default class EmailAuthentication extends BaseEntity {
   @PrimaryGeneratedColumn()
   idx: number;
 
