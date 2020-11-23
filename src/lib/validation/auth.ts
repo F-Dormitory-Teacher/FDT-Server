@@ -21,3 +21,11 @@ export const validateRegister = (req: Request, res: Response): boolean => {
 
   return validate(req, res, schema);
 };
+
+export const validateSendAuthCode = (req: Request, res: Response): boolean => {
+  const schema = Joi.object().keys({
+    email: Joi.string().max(100).required()
+  });
+
+  return validate(req, res, schema);
+};
