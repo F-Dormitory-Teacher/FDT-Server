@@ -1,13 +1,41 @@
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
+import { getRepository, Like } from "typeorm";
 import Article from "../entity/Article";
 import User from "../entity/User";
 import ArticleStatus from "../enum/ArticleStatus";
 import logger from "../lib/logger";
 import { validateChange, validateCreate, validateModify } from "../lib/validation/article";
-import article from "../routes/article";
 import ArticleList from "../type/ArticleList";
 import AuthRequest from "../type/AuthRequest";
+
+const searchArticles = async (req: Request, res: Response) => {
+  try {
+    const titleQuery = req.query.title;
+
+    if (!titleQuery && titleQuery.length >= 2) {
+      res.status(400).json({
+        status: 400,
+        message: "title is must be 1 length"
+      });
+      return;
+    }
+
+    const articleRepo = getRepository(Article);
+    const articles = await articleRepo.find({ where: { title: Like(`%${titleQuery}%`) } });
+
+    res.status(200).json({
+      status: 200,
+      message: "성공",
+      articles
+    });
+  } catch (err) {
+    logger.red("[GET] 건의물 검색 서버 오류.", err.message);
+    return res.status(500).json({
+      status: 500,
+      message: "서버 오류."
+    });
+  }
+};
 
 const getArticles = async (req: Request, res: Response) => {
   try {
@@ -336,6 +364,7 @@ const deleteArticle = async (req: AuthRequest, res: Response) => {
 };
 
 export default {
+  searchArticles,
   getArticle,
   getArticles,
   getMyArticles,

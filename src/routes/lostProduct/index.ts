@@ -10,5 +10,6 @@ router.get("/", lostProductController.getLostProducts);
 router.post("/", authMiddleware.user, lostProductController.createLostProduct);
 router.patch("/", authMiddleware.admin, lostProductMiddleware.isMine, lostProductController.updateLostProduct);
 router.delete("/", authMiddleware.user, lostProductMiddleware.isMine, lostProductController.deleteLostProduct);
+router.get("/search", authMiddleware.admin, lostProductController.searchLostProducts);
 
 export default router;

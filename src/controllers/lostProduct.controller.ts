@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
+import { getRepository, Like } from "typeorm";
 import logger from "../lib/logger";
 import { validateCreateLostProduct } from "../lib/validation/lostProduct";
 import LostProduct from "../entity/LostProduct";
@@ -138,8 +138,8 @@ const updateLostProduct = async (req: LostProductRequest, res: Response) => {
     const lostProductRepo = getRepository(LostProduct);
     const lostProduct = req.lostProduct;
 
-    lostProduct.lostStatus = lostStatus;
-    lostProductRepo.save(lostProduct);
+    lostProduct.lostStatus = LostStatusType[lostStatus];
+    await lostProductRepo.save(lostProduct);
 
     logger.green("[PATCH] 분실물 수정 성공.");
     res.status(200).json({
@@ -175,10 +175,40 @@ const deleteLostProduct = async (req: LostProductRequest, res: Response) => {
   }
 };
 
+const searchLostProducts = async (req: LostProductRequest, res: Response) => {
+  try {
+    const titleQuery = req.query.title;
+
+    if (!titleQuery && titleQuery.length >= 2) {
+      res.status(400).json({
+        status: 400,
+        message: "title is must be 1 length"
+      });
+      return;
+    }
+
+    const lostProductRepo = getRepository(LostProduct);
+    const lostProducts = await lostProductRepo.find({ where: { title: Like(`%${titleQuery}%`) } });
+
+    res.status(200).json({
+      status: 200,
+      message: "성공",
+      lostProducts
+    });
+  } catch (err) {
+    logger.red("[GET] 분실문 검색 서버 오류.", err.message);
+    return res.status(500).json({
+      status: 500,
+      message: "서버 오류."
+    });
+  }
+};
+
 export default {
   getLostProducts,
   createLostProduct,
   updateLostProduct,
   getLostProduct,
-  deleteLostProduct
+  deleteLostProduct,
+  searchLostProducts
 };
