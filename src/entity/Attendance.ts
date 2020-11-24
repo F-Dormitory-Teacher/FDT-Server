@@ -11,7 +11,7 @@ export default class Attendance extends BaseEntity {
   @JoinColumn({ name: "userIdx" })
   user: User;
 
-  @Column({ nullable: false })
+  @Column("enum", { enum: AttendType })
   type: AttendType;
 
   @Column({

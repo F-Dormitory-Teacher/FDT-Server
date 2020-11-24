@@ -123,7 +123,7 @@ const getAttends = async (req: AuthRequest, res: Response) => {
 
     if (query.studentId) {
       const userRepo = getRepository(User);
-      const user: User = await userRepo.findOne({ where: { studentId: Like(query.studentId) } });
+      const user: User = await userRepo.findOne({ where: { studentId: Like(`%${query.studentId}%`) } });
 
       if (!user) {
         logger.yellow("[GET] 출석 정보 리스트 조회 유저 없음.");
