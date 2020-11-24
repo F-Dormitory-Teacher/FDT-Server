@@ -108,15 +108,17 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-8.10.64.tgz#0dddc4c53ca4819a32b7478232d8b446ca90e1c6"
   integrity sha512-/EwBIb+imu8Qi/A3NF9sJ9iuKo7yV+pryqjmeRqaU0C4wBAOhas5mdvoYeJ5PCKrh6thRSJHdoasFqh3BQGILA==
 
-"@types/qrcode@^1.3.5":
-  version "1.3.5"
-  resolved "https://registry.yarnpkg.com/@types/qrcode/-/qrcode-1.3.5.tgz#9c97cc2875f03e2b16a0d89856fc48414e380c38"
-  integrity sha512-92QMnMb9m0ErBU20za5Eqtf4lzUcSkk5w/Cz30q5qod0lWHm2loztmFs2EnCY06yT51GY1+m/oFq2D8qVK2Bjg==
-
 "@types/nodemailer@^6.4.0":
   version "6.4.0"
   resolved "https://registry.yarnpkg.com/@types/nodemailer/-/nodemailer-6.4.0.tgz#d8c039be3ed685c4719a026455555be82c124b74"
   integrity sha512-KY7bFWB0MahRZvVW4CuW83qcCDny59pJJ0MQ5ifvfcjNwPlIT0vW4uARO4u1gtkYnWdhSvURegecY/tzcukJcA==
+  dependencies:
+    "@types/node" "*"
+
+"@types/qrcode@^1.3.5":
+  version "1.3.5"
+  resolved "https://registry.yarnpkg.com/@types/qrcode/-/qrcode-1.3.5.tgz#9c97cc2875f03e2b16a0d89856fc48414e380c38"
+  integrity sha512-92QMnMb9m0ErBU20za5Eqtf4lzUcSkk5w/Cz30q5qod0lWHm2loztmFs2EnCY06yT51GY1+m/oFq2D8qVK2Bjg==
   dependencies:
     "@types/node" "*"
 
@@ -1371,7 +1373,7 @@ moment@*:
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.0.tgz#fcbef955844d91deb55438613ddcec56e86a3425"
   integrity sha512-z6IJ5HXYiuxvFTI6eiQ9dm77uE0gyy1yXNApVHqTcnIKfY9tIwEjlzsZ6u1LQXvVgKeTnv9Xm7NDvJ7lso3MtA==
 
-"moment@>= 2.9.0", moment@^2.29.1:
+moment@2.x.x, "moment@>= 2.9.0", moment@^2.29.1:
   version "2.29.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
   integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
