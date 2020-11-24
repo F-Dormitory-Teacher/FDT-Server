@@ -4,6 +4,7 @@ import authMiddleware from "../../middleware/auth";
 
 const router = Router();
 
+router.get("/search", authMiddleware.user, articleController.searchArticles);
 router.post("/createArticle", authMiddleware.user, articleController.createArticle);
 router.get("/getMyArticles", authMiddleware.user, articleController.getMyArticles);
 router.get("/getArticles", articleController.getArticles);
