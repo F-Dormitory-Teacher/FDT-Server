@@ -27,7 +27,7 @@ const getLostProducts = async (req: Request, res: Response) => {
 };
 
 const createLostProduct = async (req: LostProductRequest, res: Response) => {
-  if (!validateCreateLostProduct) return;
+  if (!validateCreateLostProduct(req, res)) return;
 
   type RequestBody = {
     title: string;
