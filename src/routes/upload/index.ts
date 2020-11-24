@@ -5,6 +5,6 @@ import uploadMiddleware from "../../middleware/upload";
 
 const router = Router();
 
-router.post("/createNotice", uploadMiddleware, uploadController.upload);
+router.post("/", uploadMiddleware, uploadController.upload);
 
 export default router;

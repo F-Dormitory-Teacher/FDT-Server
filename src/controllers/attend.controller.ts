@@ -60,7 +60,6 @@ const getMyAttend = async (req: AuthRequest, res: Response) => {
   try {
     const queryConditions: FindManyOptions = {
       where: {
-        type: null,
         date: query.date,
         user
       }
@@ -109,11 +108,7 @@ const getAttends = async (req: AuthRequest, res: Response) => {
 
   try {
     const queryConditions: FindManyOptions = {
-      where: {
-        type: null,
-        date: null,
-        user: null
-      }
+      where: {}
     };
 
     if (query.studentId) {
@@ -173,7 +168,7 @@ const createAttend = async (req: AuthRequest, res: Response) => {
     }
 
     const attendRepo = getRepository(Attendance);
-    const isExist = await attendRepo.findOne({ where: { user, type, date: new Date() } });
+    const isExist = await attendRepo.findOne({ where: { user, date: moment().format("YYYY-MM-DD") } });
 
     if (isExist) {
       logger.yellow("[POST] 이미 출석체크된 유저.");
@@ -203,7 +198,7 @@ const createAttend = async (req: AuthRequest, res: Response) => {
     attend.user = user;
     attend.type = type;
     attend.date = today;
-    attend.status = AttendStatus.ATTEND;
+    attend.status = status;
 
     await attendRepo.save(attend);
 
