@@ -8,6 +8,7 @@ import { validateCertifyAuthCode, validateLogin, validateRegister, validateSendA
 import { v4 as uuidv4 } from "uuid";
 import sendEmail from "../lib/util/sendEmail";
 import { createToken } from "../lib/token";
+import AuthRequest from "../type/AuthRequest";
 
 const register = async (req: Request, res: Response) => {
   if (!validateRegister(req, res)) return;
@@ -102,6 +103,40 @@ const login = async (req: Request, res: Response) => {
     });
   } catch (err) {
     logger.red("[POST] 로그인 서버 오류.", err.message);
+    res.status(500).json({
+      status: 500,
+      message: "서버 오류."
+    });
+  }
+};
+
+const getMyInfo = async (req: AuthRequest, res: Response) => {
+  interface GetUser {
+    idx: number;
+    email: string;
+    name: string;
+    studentId: string;
+    pw?: string;
+    isAdmin?: boolean;
+    createdAt: Date;
+  }
+
+  const user: GetUser = req.user;
+
+  try {
+    delete user.pw;
+    delete user.isAdmin;
+
+    logger.green("[GET] 내 정보 조회 성공.");
+    res.status(200).json({
+      status: 200,
+      message: "내 정보 조회 성공.",
+      data: {
+        user
+      }
+    });
+  } catch (err) {
+    logger.red("[GET] 내 정보 조회 서버 오류.", err.message);
     res.status(500).json({
       status: 500,
       message: "서버 오류."
@@ -225,6 +260,7 @@ const sendAuthCode = async (req: Request, res: Response) => {
 export default {
   register,
   login,
+  getMyInfo,
   certifyAuthCode,
   sendAuthCode
 };
