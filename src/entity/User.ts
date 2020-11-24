@@ -35,7 +35,7 @@ export default class User extends BaseEntity {
   })
   isAdmin: boolean;
 
-  @Column("timestampz")
+  @Column("timestamp")
   @CreateDateColumn()
   createdAt: Date;
 }
