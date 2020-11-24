@@ -115,6 +115,10 @@ const validateAuth = async (req: AuthRequest) => {
     throw new Error("TOKEN_IS_ARRAY");
   }
 
+  if (!reqToken) {
+    throw new Error("NO_TOKEN");
+  }
+
   const token = reqToken.replace("Bearer ", "");
   try {
     const decoded = await verifyToken(token);

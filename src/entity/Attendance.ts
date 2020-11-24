@@ -13,6 +13,9 @@ export default class Attendance extends BaseEntity {
   @JoinColumn({ name: "userIdx" })
   user: User;
 
+  @Column()
+  userIdx: number;
+
   // 아침 / 저녁
   @Column("enum", { enum: AttendType })
   type: AttendType;

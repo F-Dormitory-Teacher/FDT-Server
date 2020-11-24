@@ -22,14 +22,16 @@ const getQrCode = async (req: Request, res: Response) => {
         date: moment().format("yyyy-MM-DD")
       })
     );
+    // const image = Buffer.from(qrcode.replace(/.*,/, ""), "base64");
 
-    const image = Buffer.from(qrcode.replace(/.*,/, ""), "base64");
-
-    res.writeHead(200, {
-      "Content-Type": "image/png",
-      "Content-Length": image.length
+    logger.green("[GET] QR CODE 조회 성공.");
+    return res.status(200).json({
+      status: 200,
+      message: "조회 성공.",
+      data: {
+        qrCode: qrcode
+      }
     });
-    res.end(image);
   } catch (err) {
     logger.red("[GET] QR CODE 생성 서버 오류.", err.message);
     return res.status(500).json({
@@ -70,15 +72,7 @@ const getMyAttend = async (req: AuthRequest, res: Response) => {
     }
 
     const AttendRepo = getRepository(Attendance);
-    let attendances: Attendance[] | Attendance | {} = await AttendRepo.find(queryConditions);
-
-    if (query.type) {
-      if (attendances) {
-        attendances = attendances[0];
-      } else {
-        attendances = {};
-      }
-    }
+    const attendances: Attendance[] = await AttendRepo.find(queryConditions);
 
     logger.green("[GET] 내 출석 정보 조회 성공.");
     return res.status(200).json({
@@ -115,13 +109,6 @@ const getAttends = async (req: AuthRequest, res: Response) => {
       const userRepo = getRepository(User);
       const user: User = await userRepo.findOne({ where: { studentId: Like(`%${query.studentId}%`) } });
 
-      if (!user) {
-        logger.yellow("[GET] 출석 정보 리스트 조회 유저 없음.");
-        return res.status(404).json({
-          status: 404,
-          message: "유저 없음."
-        });
-      }
       queryConditions.where["user"] = user;
     }
 
