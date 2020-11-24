@@ -10,7 +10,7 @@ export const validateCreateLostProduct = (req: Request, res: Response, isHasLost
     location: Joi.string().required(),
     content: Joi.string().required(),
     lostStatus: isHasLostId ? Joi.string().valid([LostStatusType.KEEP, LostStatusType.LOSTED]).required() : "",
-    imageUrl: Joi.string()
+    imageUrl: Joi.string().allow(null, "")
   });
 
   return validate(req, res, schema);
