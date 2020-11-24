@@ -12,7 +12,7 @@ const upload = async (req: any, res: Response) => {
         files.push(reqFile.filename);
       });
 
-      fileName = files[0];
+      fileName = files.length ? files[0] : null;
 
       logger.green("[POST] 파일 업로드 성공.");
       return res.status(200).json({
