@@ -1,5 +1,6 @@
 import { Entity, Column, BaseEntity, PrimaryGeneratedColumn, CreateDateColumn, OneToMany } from "typeorm";
 import Attendance from "./Attendance";
+import LostProduct from "./LostProduct";
 
 @Entity("User")
 export default class User extends BaseEntity {
@@ -8,6 +9,9 @@ export default class User extends BaseEntity {
 
   @OneToMany((type) => Attendance, (attendance) => attendance.user)
   attendances: Attendance[];
+
+  @OneToMany((type) => LostProduct, (lostProduct) => lostProduct.user)
+  lostProduct: LostProduct[];
 
   @Column({
     length: 100,

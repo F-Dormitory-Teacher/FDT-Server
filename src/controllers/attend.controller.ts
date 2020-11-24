@@ -153,9 +153,11 @@ const createAttend = async (req: AuthRequest, res: Response) => {
     }
 
     const attendRepo = getRepository(Attendance);
-    const isExist = await attendRepo.findOne({ where: { user, date: moment().format("YYYY-MM-DD") } });
+    const isExist = await attendRepo.findOne({ where: { user, date: moment().format("YYYY-MM-DD"), status: AttendStatus.NONE } });
+    console.log(isExist);
+    console.log(user, moment().format("YYYY-MM-DD"));
 
-    if (isExist) {
+    if (!isExist) {
       logger.yellow("[POST] 이미 출석체크된 유저.");
       return res.status(409).json({
         status: 409,
@@ -208,17 +210,17 @@ const createAttendInit = async (date: Date, type: AttendType) => {
 
     const attendRepo = getRepository(Attendance);
     const attends: Attendance[] = [];
-
+    console.log(users);
     users.map((user: User, idx: number) => {
       const attend: Attendance = new Attendance();
       attend.user = user;
       attend.status = AttendStatus.NONE;
       attend.date = date;
       attend.type = type;
-
+      console.log(11);
       attends.push(attend);
     });
-
+    console.log("???");
     await attendRepo.save(attends);
   } catch (err) {
     logger.red("[POST] 출석체크 초기화 실패.", err.message);
