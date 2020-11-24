@@ -26,7 +26,7 @@ const getArticles = async (req: Request, res: Response) => {
       }
     }
 
-    logger.red("[POST] 물품 신청 목록 조회 성공.");
+    logger.green("[GET] 물품 신청 목록 조회 성공.");
     return res.status(200).json({
       status: 200,
       message: "물품 신청 목록 조회 성공.",
@@ -35,7 +35,7 @@ const getArticles = async (req: Request, res: Response) => {
       }
     });
   } catch (err) {
-    logger.red("[POST] 물품 신청 목록 조회 서버 오류.", err.message);
+    logger.red("[GET] 물품 신청 목록 조회 서버 오류.", err.message);
     return res.status(500).json({
       status: 500,
       message: "서버 오류."
@@ -47,7 +47,7 @@ const getArticle = async (req: Request, res: Response) => {
   const idx: number = Number(req.params.idx);
 
   if (isNaN(idx)) {
-    logger.yellow("[DELETE] 검증 오류.", "idx is NaN");
+    logger.yellow("[GET] 검증 오류.", "idx is NaN");
     res.status(400).json({
       status: 400,
       message: "검증 오류."
@@ -60,7 +60,7 @@ const getArticle = async (req: Request, res: Response) => {
     const article: ArticleList = await articleRepo.findOne({ idx });
 
     if (!article) {
-      logger.red("[PUT] 물품 신청 없음.");
+      logger.yellow("[GET] 물품 신청 없음.");
       return res.status(404).json({
         status: 404,
         message: "물품 신청 없음."
@@ -75,7 +75,7 @@ const getArticle = async (req: Request, res: Response) => {
       article.userName = user.name;
     }
 
-    logger.red("[POST] 물품 신청 목록 조회 성공.");
+    logger.green("[GET] 물품 신청 목록 조회 성공.");
     return res.status(200).json({
       status: 200,
       message: "물품 신청 목록 조회 성공.",
@@ -84,7 +84,7 @@ const getArticle = async (req: Request, res: Response) => {
       }
     });
   } catch (err) {
-    logger.red("[POST] 물품 신청 목록 조회 서버 오류.", err.message);
+    logger.red("[GET] 물품 신청 목록 조회 서버 오류.", err.message);
     return res.status(500).json({
       status: 500,
       message: "서버 오류."
@@ -103,16 +103,16 @@ const getMyArticles = async (req: AuthRequest, res: Response) => {
       articles[i].userName = user.name;
     }
 
-    logger.red("[POST] 내 물품 신청 목록 조회 성공.");
+    logger.green("[GET] 내 물품 신청 목록 조회 성공.");
     return res.status(200).json({
       status: 200,
       message: "내 물품 신청 목록 조회 성공.",
       data: {
-        article
+        articles
       }
     });
   } catch (err) {
-    logger.red("[POST] 내 물품 신청 목록 조회 서버 오류.", err.message);
+    logger.red("[GET] 내 물품 신청 목록 조회 서버 오류.", err.message);
     return res.status(500).json({
       status: 500,
       message: "서버 오류."
@@ -145,7 +145,7 @@ const createArticle = async (req: AuthRequest, res: Response) => {
 
     await articleRepo.save(article);
 
-    logger.red("[POST] 물품 신청 성공.");
+    logger.green("[POST] 물품 신청 성공.");
     return res.status(200).json({
       status: 200,
       message: "물품 신청 성공."
@@ -189,15 +189,15 @@ const modifyArticle = async (req: AuthRequest, res: Response) => {
     const article: Article = await articleRepo.findOne({ idx });
 
     if (!article) {
-      logger.red("[PUT] 물품 신청 없음.");
+      logger.yellow("[PUT] 물품 신청 없음.");
       return res.status(404).json({
         status: 404,
         message: "물품 신청 없음."
       });
     }
 
-    if (article.user !== user || article.status === ArticleStatus.COMPLETED) {
-      logger.red("[PUT] 물품 신청 권한 없음.");
+    if (article.userIdx !== user.idx || article.status === ArticleStatus.COMPLETED) {
+      logger.yellow("[PUT] 물품 신청 권한 없음.");
       return res.status(403).json({
         status: 403,
         message: "자신의 글이 아니거나 이미 처리 완료된 글입니다."
@@ -211,7 +211,7 @@ const modifyArticle = async (req: AuthRequest, res: Response) => {
 
     await articleRepo.save(article);
 
-    logger.red("[PUT] 물품 신청 수정 성공.");
+    logger.green("[PUT] 물품 신청 수정 성공.");
     return res.status(200).json({
       status: 200,
       message: "물품 신청 수정 성공."
@@ -251,7 +251,7 @@ const changeArticle = async (req: AuthRequest, res: Response) => {
     const article: Article = await articleRepo.findOne({ idx });
 
     if (!article) {
-      logger.red("[PUT] 물품 신청 없음.");
+      logger.yellow("[PUT] 물품 신청 없음.");
       return res.status(404).json({
         status: 404,
         message: "물품 신청 없음."
@@ -262,7 +262,7 @@ const changeArticle = async (req: AuthRequest, res: Response) => {
 
     await articleRepo.save(article);
 
-    logger.red("[PUT] 물품 신청 상태 수정 성공.");
+    logger.green("[PUT] 물품 신청 상태 수정 성공.");
     return res.status(200).json({
       status: 200,
       message: "물품 신청 상태 수정 성공."
@@ -295,15 +295,15 @@ const deleteArticle = async (req: AuthRequest, res: Response) => {
     const article: Article = await articleRepo.findOne({ idx });
 
     if (!article) {
-      logger.red("[DELETE] 물품 신청 없음.");
+      logger.yellow("[DELETE] 물품 신청 없음.");
       return res.status(404).json({
         status: 404,
         message: "물품 신청 없음."
       });
     }
 
-    if (!user.isAdmin && article.user !== user) {
-      logger.red("[DELETE] 물품 신청 삭제 권한 없음.");
+    if (!user.isAdmin && article.userIdx !== user.idx) {
+      logger.yellow("[DELETE] 물품 신청 삭제 권한 없음.");
       return res.status(403).json({
         status: 403,
         message: "권한 없음."
@@ -312,7 +312,7 @@ const deleteArticle = async (req: AuthRequest, res: Response) => {
 
     await articleRepo.remove(article);
 
-    logger.red("[DELETE] 물품 신청 삭제 성공.");
+    logger.green("[DELETE] 물품 신청 삭제 성공.");
     return res.status(200).json({
       status: 200,
       message: "물품 신청 삭제 성공."

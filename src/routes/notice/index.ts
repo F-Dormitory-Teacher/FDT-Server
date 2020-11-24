@@ -4,7 +4,8 @@ import authMiddleware from "../../middleware/auth";
 
 const router = Router();
 
-router.get("/getNotice", noticeController.getNotice);
+router.get("/getNotices", noticeController.getNotices);
+router.get("/getNotice/:idx", noticeController.getNotice);
 router.post("/createNotice", authMiddleware.admin, noticeController.createNotice);
 router.put("/modifyNotice", authMiddleware.admin, noticeController.modifyNotice);
 
