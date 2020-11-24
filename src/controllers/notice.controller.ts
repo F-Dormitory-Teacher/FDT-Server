@@ -15,24 +15,20 @@ const getNotice = async (req: Request, res: Response) => {
 
   const query: RequestQuery = req.query;
 
-  if (!query.date || typeof query.date !== "string") {
-    logger.yellow("[GET] 검증 오류.");
-    return res.status(400).json({
-      status: 400,
-      message: "검증 오류."
-    });
-  }
-
   try {
     const queryConditions: FindManyOptions = {
       where: {
         type: null,
-        date: query.date
+        date: null
       }
     };
 
     if (query.type) {
       queryConditions.where["type"] = query.type;
+    }
+
+    if (query.date) {
+      queryConditions.where["date"] = query.date;
     }
 
     const noticeRepo = getRepository(Notice);
@@ -46,7 +42,7 @@ const getNotice = async (req: Request, res: Response) => {
       }
     }
 
-    logger.yellow("[GET] 공지 조회 성공.");
+    logger.green("[GET] 공지 조회 성공.");
     return res.status(200).json({
       status: 200,
       message: "공지 조회 성공.",
@@ -55,7 +51,7 @@ const getNotice = async (req: Request, res: Response) => {
       }
     });
   } catch (err) {
-    logger.yellow("[GET] 공지 조회 서버 오류.");
+    logger.red("[GET] 공지 조회 서버 오류.");
     return res.status(500).json({
       status: 500,
       message: "서버 오류."
@@ -82,7 +78,7 @@ const createNotice = async (req: AuthRequest, res: Response) => {
     const isExist = await noticeRepo.findOne({ where: { date: body.date, type: body.type } });
 
     if (isExist) {
-      logger.red("[POST] 이미 작성된 안내사항.");
+      logger.yellow("[POST] 이미 작성된 안내사항.");
       return res.status(409).json({
         status: 409,
         message: "이미 작성된 안내사항."
@@ -98,7 +94,7 @@ const createNotice = async (req: AuthRequest, res: Response) => {
 
     await noticeRepo.save(notice);
 
-    logger.red("[POST] 안내사항 작성 성공.");
+    logger.green("[POST] 안내사항 작성 성공.");
     return res.status(200).json({
       status: 200,
       message: "안내사항 작성 성공."
@@ -131,7 +127,7 @@ const modifyNotice = async (req: AuthRequest, res: Response) => {
     const isExist = await noticeRepo.findOne({ where: { date: body.date, type: body.type } });
 
     if (!isExist) {
-      logger.red("[PUT] 안내사항 없음.");
+      logger.yellow("[PUT] 안내사항 없음.");
       return res.status(404).json({
         status: 404,
         message: "안내사항 없음."
@@ -145,7 +141,7 @@ const modifyNotice = async (req: AuthRequest, res: Response) => {
 
     await noticeRepo.save(isExist);
 
-    logger.red("[PUT] 안내사항 수정 성공.");
+    logger.green("[PUT] 안내사항 수정 성공.");
     return res.status(200).json({
       status: 200,
       message: "안내사항 수정 성공."
