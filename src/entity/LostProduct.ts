@@ -26,7 +26,7 @@ export default class LostProduct extends BaseEntity {
   @Column({ nullable: true })
   imageUrl: string;
 
-  @Column({ type: "enum", nullable: false, enum: LostStatusType })
+  @Column({ type: "enum", nullable: false, enum: LostStatusType, default: LostStatusType.LOSTED })
   lostStatus: LostStatusType;
 
   @Column("timestamp")

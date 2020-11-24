@@ -129,6 +129,7 @@ const createArticle = async (req: AuthRequest, res: Response) => {
     body: {
       title: string;
       content: string;
+      location: string;
       image?: string;
     };
   };
@@ -142,6 +143,7 @@ const createArticle = async (req: AuthRequest, res: Response) => {
     article.content = body.content;
     article.image = body.image;
     article.user = user;
+    article.location = body.location;
 
     await articleRepo.save(article);
 
@@ -180,6 +182,7 @@ const modifyArticle = async (req: AuthRequest, res: Response) => {
       title?: string;
       content?: string;
       image?: string;
+      location?: string;
     };
   };
 
@@ -207,6 +210,7 @@ const modifyArticle = async (req: AuthRequest, res: Response) => {
     article.title = body.title || article.title;
     article.content = body.content || article.content;
     article.image = body.image !== undefined ? body.image : article.image;
+    article.location = body.location || article.location;
     article.user = user;
 
     await articleRepo.save(article);

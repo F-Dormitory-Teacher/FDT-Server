@@ -7,7 +7,7 @@ import { NextFunction, Request, Response } from "express";
 
 const storage = multer.diskStorage({
   destination: (_req: Request, _file: Express.Multer.File, cb: Function) => {
-    cb(null, process.cwd() + "/src/public");
+    cb(null, process.cwd() + "/public");
   },
   filename: (_req: Request, file: Express.Multer.File, cb: Function) => {
     cb(null, `${file.fieldname}-${uuidv4()}-${file.originalname}`);
@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
 });
 
 const limits = {
-  fileSize: 2 * 1024 * 1024
+  fileSize: 5 * 1024 * 1024
 };
 
 const fileFilter = (req: Request, file: Express.Multer.File, callback: Function) => {

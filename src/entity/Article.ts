@@ -29,6 +29,9 @@ export default class Article extends BaseEntity {
   @Column({ type: "text", nullable: false })
   content: string;
 
+  @Column({ nullable: false, length: 45 })
+  location: string;
+
   @Column({ nullable: true })
   image: string;
 
