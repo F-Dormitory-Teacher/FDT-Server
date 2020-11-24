@@ -237,7 +237,6 @@ const createAttendInit = async (date: Date, type: AttendType) => {
       console.log(11);
       attends.push(attend);
     });
-    console.log("???");
     await attendRepo.save(attends);
   } catch (err) {
     logger.red("[POST] 출석체크 초기화 실패.", err.message);

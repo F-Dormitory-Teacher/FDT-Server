@@ -1,7 +1,6 @@
 import * as Joi from "joi";
 import validate from ".";
 import { Request, Response } from "express";
-import logger from "../logger";
 
 export const validateCreateLostProduct = (req: Request, res: Response, isHasLostId: boolean = false): boolean => {
   const schema = Joi.object().keys({
