@@ -11,8 +11,8 @@ import {
 import ArticleStatus from "../enum/ArticleStatus";
 import User from "./User";
 
-@Entity("Attendance")
-export default class Attendance extends BaseEntity {
+@Entity("Article")
+export default class Article extends BaseEntity {
   @PrimaryGeneratedColumn()
   idx: number;
 
