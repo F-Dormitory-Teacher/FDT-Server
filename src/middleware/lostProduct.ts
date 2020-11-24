@@ -31,7 +31,7 @@ const isMine = async (req: LostProductRequest, res: Response, next: NextFunction
       logger.red("본인 게시글 여부 검증 실패.");
       res.status(403).json({
         status: 403,
-        message: "본인 게시글만 접근 가능.."
+        message: "본인 게시글만 접근 가능."
       });
       return;
     }
