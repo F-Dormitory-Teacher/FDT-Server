@@ -77,6 +77,7 @@ const getMyAttend = async (req: AuthRequest, res: Response) => {
 
     for (let i in attendances) {
       attendances[i].userName = user.name;
+      attendances[i].userStudentId = user.studentId;
     }
 
     logger.green("[GET] 내 출석 정보 조회 성공.");
@@ -132,8 +133,10 @@ const getAttends = async (req: AuthRequest, res: Response) => {
     for (let i in attendances) {
       const user: User = await userRepo.findOne({ idx: attendances[i].userIdx });
       if (user) {
+        attendances[i].userStudentId = user.studentId;
         attendances[i].userName = user.name;
       } else {
+        attendances[i].userStudentId = null;
         attendances[i].userName = null;
       }
     }

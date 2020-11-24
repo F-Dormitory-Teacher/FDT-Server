@@ -21,8 +21,10 @@ const getArticles = async (req: Request, res: Response) => {
 
       if (!user) {
         articles[i].userName = null;
+        articles[i].userStudentId = null;
       } else {
         articles[i].userName = user.name;
+        articles[i].userStudentId = user.studentId;
       }
     }
 
@@ -71,7 +73,9 @@ const getArticle = async (req: Request, res: Response) => {
     const user: User = await userRepo.findOne({ idx: article.userIdx });
     if (!user) {
       article.userName = null;
+      article.userStudentId = null;
     } else {
+      article.userStudentId = user.studentId;
       article.userName = user.name;
     }
 
@@ -101,6 +105,7 @@ const getMyArticles = async (req: AuthRequest, res: Response) => {
 
     for (let i in articles) {
       articles[i].userName = user.name;
+      articles[i].userStudentId = user.studentId;
     }
 
     logger.green("[GET] 내 물품 신청 목록 조회 성공.");
