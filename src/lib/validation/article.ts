@@ -16,7 +16,6 @@ export const validateCreate = (req: Request, res: Response): boolean => {
 
 export const validateModify = (req: Request, res: Response): boolean => {
   const schema = Joi.object().keys({
-    idx: Joi.number().integer().required(),
     title: Joi.string().max(100),
     content: Joi.string(),
     image: Joi.string()
@@ -27,7 +26,6 @@ export const validateModify = (req: Request, res: Response): boolean => {
 
 export const validateChange = (req: Request, res: Response): boolean => {
   const schema = Joi.object().keys({
-    idx: Joi.number().integer().required(),
     status: Joi.string().valid([ArticleStatus.COMPLETED, ArticleStatus.HOLDED, ArticleStatus.NONE]).required()
   });
 
