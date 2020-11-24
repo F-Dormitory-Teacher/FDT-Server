@@ -7,7 +7,7 @@ import { validateModify } from "../lib/validation/attend";
 import { validateCreate } from "../lib/validation/notice";
 import AuthRequest from "../type/AuthRequest";
 
-const getNotice = async (req: Request, res: Response) => {
+const getNotices = async (req: Request, res: Response) => {
   type RequestQuery = {
     type?: AttendType;
     date?: Date;
@@ -37,6 +37,47 @@ const getNotice = async (req: Request, res: Response) => {
       message: "공지 조회 성공.",
       data: {
         notices
+      }
+    });
+  } catch (err) {
+    logger.red("[GET] 공지 조회 서버 오류.");
+    return res.status(500).json({
+      status: 500,
+      message: "서버 오류."
+    });
+  }
+};
+
+const getNotice = async (req: Request, res: Response) => {
+  const idx: number = Number(req.params.idx);
+
+  if (isNaN(idx)) {
+    logger.yellow("[GET] 검증 오류.", "idx is NaN");
+    res.status(400).json({
+      status: 400,
+      message: "검증 오류."
+    });
+    return;
+  }
+
+  try {
+    const noticeRepo = getRepository(Notice);
+    const notice: Notice = await noticeRepo.findOne({ idx });
+
+    if (!notice) {
+      logger.yellow("[GET] 안내사항 없음.");
+      return res.status(404).json({
+        status: 404,
+        message: "안내 사항 없음."
+      });
+    }
+
+    logger.green("[GET] 공지 조회 성공.");
+    return res.status(200).json({
+      status: 200,
+      message: "공지 조회 성공.",
+      data: {
+        notice
       }
     });
   } catch (err) {
@@ -145,6 +186,7 @@ const modifyNotice = async (req: AuthRequest, res: Response) => {
 };
 
 export default {
+  getNotices,
   getNotice,
   createNotice,
   modifyNotice

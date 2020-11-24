@@ -20,16 +20,22 @@ export default class Article extends BaseEntity {
   @JoinColumn({ name: "userIdx" })
   user: User;
 
+  @Column()
+  userIdx: number;
+
   @Column({ nullable: false, length: 100 })
   title: string;
 
   @Column({ type: "text", nullable: false })
   content: string;
 
+  @Column({ nullable: false, length: 45 })
+  location: string;
+
   @Column({ nullable: true })
   image: string;
 
-  @Column("enum", { enum: ArticleStatus })
+  @Column("enum", { enum: ArticleStatus, default: ArticleStatus.NONE })
   status: ArticleStatus;
 
   @Column("timestamp")

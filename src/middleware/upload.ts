@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
 });
 
 const limits = {
-  fileSize: 2 * 1024 * 1024
+  fileSize: 5 * 1024 * 1024
 };
 
 const fileFilter = (req: Request, file: Express.Multer.File, callback: Function) => {
