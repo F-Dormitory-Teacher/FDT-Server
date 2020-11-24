@@ -77,12 +77,13 @@ const user = async (req: AuthRequest, res: Response, next: NextFunction) => {
 };
 
 const validateAuth = async (req: AuthRequest) => {
-  const reqToken: string | string[] = req.headers["access_token"];
+  const reqToken: string | string[] = req.headers.authorization;
+
   if (Array.isArray(reqToken)) {
     throw new Error("TOKEN_IS_ARRAY");
   }
 
-  const token = reqToken;
+  const token = reqToken.replace("Bearer ", "");
   try {
     const decoded = await verifyToken(token);
 
