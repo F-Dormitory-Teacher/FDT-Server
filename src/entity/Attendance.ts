@@ -1,25 +1,30 @@
 import { Entity, Column, BaseEntity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, CreateDateColumn } from "typeorm";
 import AttendType from "../enum/AttendType";
 import User from "./User";
+import AttendStatus from "../enum/AttendStatus";
 
 @Entity("Attendance")
 export default class Attendance extends BaseEntity {
   @PrimaryGeneratedColumn()
   idx: number;
 
+  // user
   @ManyToOne((type) => User, { onDelete: "CASCADE" })
   @JoinColumn({ name: "userIdx" })
   user: User;
 
+  // 아침 / 저녁
   @Column("enum", { enum: AttendType })
   type: AttendType;
 
-  @Column({
+  // 출석 여부
+  @Column("enum", {
     nullable: false,
-    default: false
+    enum: AttendStatus
   })
-  isAttendance: boolean;
+  status: AttendStatus;
 
+  // 날짜
   @Column({ type: "date", nullable: false })
   date: Date;
 }

@@ -8,7 +8,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn
 } from "typeorm";
-import ArticleStatusType from "../enum/ArticleStatusType";
+import ArticleStatus from "../enum/ArticleStatus";
 import User from "./User";
 
 @Entity("Attendance")
@@ -29,8 +29,8 @@ export default class Attendance extends BaseEntity {
   @Column({ nullable: true })
   image: string;
 
-  @Column("enum", { enum: ArticleStatusType })
-  status: ArticleStatusType;
+  @Column("enum", { enum: ArticleStatus })
+  status: ArticleStatus;
 
   @Column("timestamp")
   @CreateDateColumn()

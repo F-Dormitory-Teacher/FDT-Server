@@ -4,6 +4,7 @@ import { toDataURL } from "qrcode";
 import { FindManyOptions, getRepository, Like } from "typeorm";
 import Attendance from "../entity/Attendance";
 import User from "../entity/User";
+import AttendStatus from "../enum/AttendStatus";
 import AttendType from "../enum/AttendType";
 import logger from "../lib/logger";
 import { validateModify } from "../lib/validation/attend";
@@ -181,7 +182,7 @@ const createAttend = async (req: AuthRequest, res: Response) => {
     attend.user = user;
     attend.type = type;
     attend.date = new Date();
-    attend.isAttendance = true;
+    attend.status = AttendStatus.ATTEND;
 
     await attendRepo.save(attend);
 
@@ -207,7 +208,7 @@ const modifyAttend = async (req: AuthRequest, res: Response) => {
       userIdx: number;
       date: Date;
       type: AttendType;
-      isAttendance: boolean;
+      status: AttendStatus;
     };
   };
 
@@ -236,7 +237,7 @@ const modifyAttend = async (req: AuthRequest, res: Response) => {
       });
     }
 
-    attend.isAttendance = body.isAttendance;
+    attend.status = body.status;
 
     await attendRepo.save(attend);
 
