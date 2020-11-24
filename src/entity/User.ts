@@ -1,9 +1,13 @@
-import { Entity, Column, BaseEntity, PrimaryGeneratedColumn, CreateDateColumn } from "typeorm";
+import { Entity, Column, BaseEntity, PrimaryGeneratedColumn, CreateDateColumn, OneToMany } from "typeorm";
+import Attendance from "./Attendance";
 
 @Entity("User")
 export default class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   idx: number;
+
+  @OneToMany((type) => Attendance, (attendance) => attendance.user)
+  attendances: Attendance[];
 
   @Column({
     length: 100,
@@ -35,7 +39,7 @@ export default class User extends BaseEntity {
   })
   isAdmin: boolean;
 
-  @Column("timestampz")
+  @Column("timestamp")
   @CreateDateColumn()
   createdAt: Date;
 }

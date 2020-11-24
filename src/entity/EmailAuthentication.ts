@@ -1,9 +1,12 @@
-import { Entity, Column, BaseEntity, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, BaseEntity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("EmailAuthentication")
 export default class EmailAuthentication extends BaseEntity {
   @PrimaryGeneratedColumn()
   idx: number;
+
+  @Column({ unique: true })
+  authCode: string;
 
   @Column({
     length: 100,
@@ -14,6 +17,6 @@ export default class EmailAuthentication extends BaseEntity {
   @Column({ nullable: false, default: false })
   isCertified: boolean;
 
-  @Column("timestampz")
+  @Column({ nullable: false, type: "timestamp" })
   expireAt: Date;
 }
