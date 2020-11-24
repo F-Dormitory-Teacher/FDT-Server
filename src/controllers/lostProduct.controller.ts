@@ -138,8 +138,8 @@ const updateLostProduct = async (req: LostProductRequest, res: Response) => {
     const lostProductRepo = getRepository(LostProduct);
     const lostProduct = req.lostProduct;
 
-    lostProduct.lostStatus = lostStatus;
-    lostProductRepo.save(lostProduct);
+    lostProduct.lostStatus = LostStatusType[lostStatus];
+    await lostProductRepo.save(lostProduct);
 
     logger.green("[PATCH] 분실물 수정 성공.");
     res.status(200).json({
