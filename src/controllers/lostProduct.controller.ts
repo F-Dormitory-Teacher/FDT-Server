@@ -34,11 +34,10 @@ const createLostProduct = async (req: LostProductRequest, res: Response) => {
     content: string;
     location: string;
     imageUrl: string;
-    lostStatus: LostStatusType;
   };
 
   const body: RequestBody = req.body;
-  const { title, content, location, imageUrl, lostStatus } = body;
+  const { title, content, location, imageUrl } = body;
 
   try {
     const lostProductRepo = getRepository(LostProduct);
@@ -48,7 +47,6 @@ const createLostProduct = async (req: LostProductRequest, res: Response) => {
     lostProduct.content = content;
     lostProduct.location = location;
     lostProduct.imageUrl = imageUrl;
-    lostProduct.lostStatus = lostStatus;
     lostProduct.user = req.user;
 
     lostProductRepo.save(lostProduct);

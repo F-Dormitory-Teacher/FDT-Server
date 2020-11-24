@@ -9,7 +9,7 @@ export const validateCreateLostProduct = (req: Request, res: Response, isHasLost
     title: Joi.string().required(),
     location: Joi.string().required(),
     content: Joi.string().required(),
-    lostStatus: Joi.string().required(),
+    lostStatus: isHasLostId ? Joi.string().required() : "",
     imageUrl: Joi.string()
   });
 
