@@ -40,6 +40,7 @@ export const turnOffSchedule = (req: Request, res: Response) => {
     }
 
     schedule.cancel();
+    schedule = null;
     logger.green("[DELETE] 스케줄 정지 성공.");
     res.status(200).json({
       status: 200,
@@ -47,6 +48,26 @@ export const turnOffSchedule = (req: Request, res: Response) => {
     });
   } catch (err) {
     logger.red("[DELETE] 스케쥴 정지 서버 오류.", err.message);
+    res.status(500).json({
+      status: 500,
+      message: "서버 오류."
+    });
+  }
+};
+
+export const checkStatus = async (req: Request, res: Response) => {
+  try {
+    if (schedule) {
+      res.status(200).json({
+        isRunning: true
+      });
+      return;
+    }
+    res.status(200).json({
+      isRunning: false
+    });
+  } catch (err) {
+    logger.red("[POST] 스케쥴 상태 체크 서버 오류.", err.message);
     res.status(500).json({
       status: 500,
       message: "서버 오류."
