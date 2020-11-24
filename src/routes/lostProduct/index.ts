@@ -5,9 +5,10 @@ import lostProductMiddleware from "../../middleware/lostProduct";
 
 const router = Router();
 
-router.get("/", authMiddleware.loggedIn, lostProductController.getLostProducts);
-router.post("/", authMiddleware.loggedIn, lostProductController.createLostProduct);
-router.patch("/", authMiddleware.loggedIn, lostProductMiddleware.isMine, lostProductController.updateLostProduct);
-router.delete("/", authMiddleware.loggedIn, lostProductMiddleware.isMine, lostProductController.deleteLostProduct);
+router.get("/getLostInfo/:idx", lostProductController.getLostProduct);
+router.get("/", lostProductController.getLostProducts);
+router.post("/", authMiddleware.user, lostProductController.createLostProduct);
+router.patch("/", authMiddleware.admin, lostProductMiddleware.isMine, lostProductController.updateLostProduct);
+router.delete("/", authMiddleware.user, lostProductMiddleware.isMine, lostProductController.deleteLostProduct);
 
 export default router;

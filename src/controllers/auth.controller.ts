@@ -125,7 +125,6 @@ const getMyInfo = async (req: AuthRequest, res: Response) => {
 
   try {
     delete user.pw;
-    delete user.isAdmin;
 
     logger.green("[GET] 내 정보 조회 성공.");
     res.status(200).json({

@@ -10,6 +10,7 @@ import attendTime from "../lib/attendTime";
 import logger from "../lib/logger";
 import getAttendType from "../lib/util/getAttendType";
 import { validateModify } from "../lib/validation/attend";
+import AttendList from "../type/AttendList";
 import AuthRequest from "../type/AuthRequest";
 
 const getQrCode = async (req: Request, res: Response) => {
@@ -72,7 +73,11 @@ const getMyAttend = async (req: AuthRequest, res: Response) => {
     }
 
     const AttendRepo = getRepository(Attendance);
-    const attendances: Attendance[] = await AttendRepo.find(queryConditions);
+    const attendances: AttendList[] = await AttendRepo.find(queryConditions);
+
+    for (let i in attendances) {
+      attendances[i].userName = user.name;
+    }
 
     logger.green("[GET] 내 출석 정보 조회 성공.");
     return res.status(200).json({
@@ -121,7 +126,17 @@ const getAttends = async (req: AuthRequest, res: Response) => {
     }
 
     const AttendRepo = getRepository(Attendance);
-    const attendances: Attendance[] = await AttendRepo.find(queryConditions);
+    const attendances: AttendList[] = await AttendRepo.find(queryConditions);
+
+    const userRepo = getRepository(User);
+    for (let i in attendances) {
+      const user: User = await userRepo.findOne({ idx: attendances[i].userIdx });
+      if (user) {
+        attendances[i].userName = user.name;
+      } else {
+        attendances[i].userName = null;
+      }
+    }
 
     logger.green("[GET] 출석 정보 리스트 조회 성공.");
     return res.status(200).json({
@@ -222,7 +237,6 @@ const createAttendInit = async (date: Date, type: AttendType) => {
       console.log(11);
       attends.push(attend);
     });
-    console.log("???");
     await attendRepo.save(attends);
   } catch (err) {
     logger.red("[POST] 출석체크 초기화 실패.", err.message);
