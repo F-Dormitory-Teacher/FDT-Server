@@ -1,8 +1,11 @@
-import { Entity, Column, BaseEntity, PrimaryColumn } from "typeorm";
+import { Entity, Column, BaseEntity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("EmailAuthentication")
 export default class EmailAuthentication extends BaseEntity {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
+  idx: number;
+
+  @Column({ unique: true })
   authCode: string;
 
   @Column({
