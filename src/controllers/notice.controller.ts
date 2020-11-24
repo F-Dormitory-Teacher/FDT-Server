@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { FindManyOptions, getRepository } from "typeorm";
+import { Binary, FindManyOptions, getRepository } from "typeorm";
 import Notice from "../entity/Notice";
 import AttendType from "../enum/AttendType";
 import logger from "../lib/logger";
@@ -17,10 +17,7 @@ const getNotice = async (req: Request, res: Response) => {
 
   try {
     const queryConditions: FindManyOptions = {
-      where: {
-        type: null,
-        date: null
-      }
+      where: {}
     };
 
     if (query.type) {
@@ -32,15 +29,7 @@ const getNotice = async (req: Request, res: Response) => {
     }
 
     const noticeRepo = getRepository(Notice);
-    let notices: Notice[] | Notice | {} = await noticeRepo.find(queryConditions);
-
-    if (query.type) {
-      if (notices) {
-        notices = notices[0];
-      } else {
-        notices = {};
-      }
-    }
+    const notices: Notice[] = await noticeRepo.find(queryConditions);
 
     logger.green("[GET] 공지 조회 성공.");
     return res.status(200).json({
