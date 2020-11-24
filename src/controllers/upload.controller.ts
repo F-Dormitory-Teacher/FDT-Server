@@ -5,6 +5,7 @@ const upload = async (req: any, res: Response) => {
   try {
     const reqFiles = req.files;
     const files: string[] = [];
+    let fileName: string;
 
     if (reqFiles) {
       reqFiles.forEach(async (reqFile: any) => {
@@ -12,12 +13,14 @@ const upload = async (req: any, res: Response) => {
         files.push(reqFile.filename);
       });
 
+      fileName = files.length ? files[0] : null;
+
       logger.green("[POST] 파일 업로드 성공.");
       return res.status(200).json({
         status: 200,
         message: "파일 업로드 성공.",
         data: {
-          files
+          file: fileName
         }
       });
     } else {
