@@ -1,7 +1,7 @@
-enum ArticleStatusType {
+enum ArticleStatus {
   COMPLETED = "COMPLETED",
   NONE = "NONE",
   HOLDED = "HOLDED"
 }
 
-export default ArticleStatusType;
+export default ArticleStatus;
