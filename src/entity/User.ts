@@ -7,12 +7,6 @@ export default class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   idx: number;
 
-  @OneToMany((type) => Attendance, (attendance) => attendance.user)
-  attendances: Attendance[];
-
-  @OneToMany((type) => LostProduct, (lostProduct) => lostProduct.user)
-  lostProduct: LostProduct[];
-
   @Column({
     length: 100,
     nullable: false

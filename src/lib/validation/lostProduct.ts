@@ -3,11 +3,13 @@ import validate from ".";
 import { Request, Response } from "express";
 import logger from "../logger";
 
-export const validateCreateLostProduct = (req: Request, res: Response): boolean => {
+export const validateCreateLostProduct = (req: Request, res: Response, isHasLostId: boolean = false): boolean => {
   const schema = Joi.object().keys({
+    lostId: isHasLostId ? Joi.number().required() : "",
     title: Joi.string().required(),
     location: Joi.string().required(),
     content: Joi.string().required(),
+    lostStatus: Joi.string().required(),
     imageUrl: Joi.string()
   });
 
