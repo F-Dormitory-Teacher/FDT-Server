@@ -90,7 +90,7 @@ const validateAuth = async (req: AuthRequest) => {
     const userRepo = getRepository(User);
     const user: User = await userRepo.findOne({
       where: {
-        id: decoded.id
+        email: decoded.id
       }
     });
 
