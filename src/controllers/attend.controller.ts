@@ -22,14 +22,16 @@ const getQrCode = async (req: Request, res: Response) => {
         date: moment().format("yyyy-MM-DD")
       })
     );
+    // const image = Buffer.from(qrcode.replace(/.*,/, ""), "base64");
 
-    const image = Buffer.from(qrcode.replace(/.*,/, ""), "base64");
-
-    res.writeHead(200, {
-      "Content-Type": "image/png",
-      "Content-Length": image.length
+    logger.green("[GET] QR CODE 조회 성공.");
+    return res.status(200).json({
+      status: 200,
+      message: "조회 성공.",
+      data: {
+        qrCode: qrcode
+      }
     });
-    res.end(image);
   } catch (err) {
     logger.red("[GET] QR CODE 생성 서버 오류.", err.message);
     return res.status(500).json({
