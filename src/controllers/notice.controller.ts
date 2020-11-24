@@ -1,10 +1,9 @@
 import { Request, Response } from "express";
-import { Binary, FindManyOptions, getRepository } from "typeorm";
+import { FindManyOptions, getRepository } from "typeorm";
 import Notice from "../entity/Notice";
 import AttendType from "../enum/AttendType";
 import logger from "../lib/logger";
-import { validateModify } from "../lib/validation/attend";
-import { validateCreate } from "../lib/validation/notice";
+import { validateCreate, validateModify } from "../lib/validation/notice";
 import AuthRequest from "../type/AuthRequest";
 
 const getNotices = async (req: Request, res: Response) => {
