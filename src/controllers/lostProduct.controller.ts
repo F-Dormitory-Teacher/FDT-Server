@@ -101,18 +101,35 @@ const updateLostProduct = async (req: Request, res: Response) => {
 };
 
 const deleteLostProduct = async (req: Request, res: Response) => {
-  if (!req.body.lostId) {
-    res.status(404).json({
+  const lostId = req.body.lostId;
+  if (!lostId) {
+    res.status(400).json({
       status: 400,
-      message: "존재하지 않는 분실물 아이디."
+      message: "BAD REQUEST 'lostId' is required"
     });
     return;
   }
 
   try {
     const lostProductRepo = getRepository(LostProduct);
+
+    const lostProduct = await lostProductRepo.findOne(lostId);
+    if (!lostProduct) {
+      res.status(404).json({
+        status: 404,
+        message: "NOT FOUND"
+      });
+      return;
+    }
+
+    lostProductRepo.remove(lostProduct);
+    logger.green("[DELETE] 분실물 삭제 성공.");
+    res.status(200).json({
+      status: 200,
+      message: "삭제 성공."
+    });
   } catch (err) {
-    logger.red("[PATCH] 분실물 수정 서버 오류.", err.message);
+    logger.red("[DELETE] 분실물 삭제 서버 오류.", err.message);
     return res.status(500).json({
       status: 500,
       message: "서버 오류."
