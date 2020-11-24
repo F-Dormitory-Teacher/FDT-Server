@@ -3,6 +3,8 @@ import { getRepository } from "typeorm";
 import logger from "../lib/logger";
 import { validateCreateLostProduct } from "../lib/validation/lostProduct";
 import LostProduct from "../entity/LostProduct";
+import LostProductRequest from "../type/LostProductRequest";
+import LostStatusType from "../enum/LostStatus";
 
 const getLostProducts = async (req: Request, res: Response) => {
   try {
@@ -24,7 +26,7 @@ const getLostProducts = async (req: Request, res: Response) => {
   }
 };
 
-const createLostProduct = async (req: Request, res: Response) => {
+const createLostProduct = async (req: LostProductRequest, res: Response) => {
   if (!validateCreateLostProduct) return;
 
   type RequestBody = {
@@ -32,10 +34,11 @@ const createLostProduct = async (req: Request, res: Response) => {
     content: string;
     location: string;
     imageUrl: string;
+    lostStatus: LostStatusType;
   };
 
   const body: RequestBody = req.body;
-  const { title, content, location, imageUrl } = body;
+  const { title, content, location, imageUrl, lostStatus } = body;
 
   try {
     const lostProductRepo = getRepository(LostProduct);
@@ -45,6 +48,8 @@ const createLostProduct = async (req: Request, res: Response) => {
     lostProduct.content = content;
     lostProduct.location = location;
     lostProduct.imageUrl = imageUrl;
+    lostProduct.lostStatus = lostStatus;
+    lostProduct.user = req.user;
 
     lostProductRepo.save(lostProduct);
 
@@ -62,27 +67,29 @@ const createLostProduct = async (req: Request, res: Response) => {
   }
 };
 
-const updateLostProduct = async (req: Request, res: Response) => {
-  if (!validateCreateLostProduct) return;
+const updateLostProduct = async (req: LostProductRequest, res: Response) => {
+  if (!validateCreateLostProduct(req, res, true)) return;
 
   type RequestBody = {
     title: string;
     content: string;
     location: string;
     imageUrl: string;
+    lostStatus: LostStatusType;
   };
 
   const body: RequestBody = req.body;
-  const { title, content, location, imageUrl } = body;
+  const { title, content, location, imageUrl, lostStatus } = body;
 
   try {
     const lostProductRepo = getRepository(LostProduct);
-    const lostProduct = new LostProduct();
+    const lostProduct = req.lostProduct;
 
     lostProduct.title = title;
     lostProduct.content = content;
     lostProduct.location = location;
     lostProduct.imageUrl = imageUrl;
+    lostProduct.lostStatus = lostStatus;
 
     lostProductRepo.save(lostProduct);
 
@@ -100,27 +107,10 @@ const updateLostProduct = async (req: Request, res: Response) => {
   }
 };
 
-const deleteLostProduct = async (req: Request, res: Response) => {
-  const lostId = req.body.lostId;
-  if (!lostId) {
-    res.status(400).json({
-      status: 400,
-      message: "BAD REQUEST 'lostId' is required"
-    });
-    return;
-  }
-
+const deleteLostProduct = async (req: LostProductRequest, res: Response) => {
   try {
     const lostProductRepo = getRepository(LostProduct);
-
-    const lostProduct = await lostProductRepo.findOne(lostId);
-    if (!lostProduct) {
-      res.status(404).json({
-        status: 404,
-        message: "NOT FOUND"
-      });
-      return;
-    }
+    const lostProduct = req.lostProduct;
 
     lostProductRepo.remove(lostProduct);
     logger.green("[DELETE] 분실물 삭제 성공.");

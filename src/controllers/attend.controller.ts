@@ -155,11 +155,11 @@ const createAttend = async (req: AuthRequest, res: Response) => {
     }
 
     const attendRepo = getRepository(Attendance);
-    const isExist = await attendRepo.findOne({ where: { user, date: moment().format("YYYY-MM-DD"), status: AttendStatus.NONE } });
+    const isExist = await attendRepo.findOne({ where: { user, date: moment().format("YYYY-MM-DD") } });
     console.log(isExist);
     console.log(user, moment().format("YYYY-MM-DD"));
 
-    if (!isExist) {
+    if (isExist && isExist.status !== AttendStatus.NONE) {
       logger.yellow("[POST] 이미 출석체크된 유저.");
       return res.status(409).json({
         status: 409,
