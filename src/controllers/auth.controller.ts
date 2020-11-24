@@ -125,6 +125,13 @@ const certifyAuthCode = async (req: Request, res: Response) => {
       return;
     }
 
+    if (emailAuthentication.isCertified) {
+      res.status(409).json({
+        message: "이미 인증된 코드입니다."
+      });
+      return;
+    }
+
     if (moment(Date.now()).isAfter(emailAuthentication.expireAt)) {
       res.status(409).json({
         message: "유효기간 만료."
@@ -176,7 +183,8 @@ const sendAuthCode = async (req: Request, res: Response) => {
           emailAuthentication.authCode = authCode;
           emailAuthentication.expireAt = new Date(moment().add(EXPIRED_MINUTE, "minutes").format("YYYY-MM-DDTHH:mm:ss"));
 
-          await emailAuthRepo.update(emailAuthentication.authCode, emailAuthentication);
+          await emailAuthRepo.update(emailAuthentication.idx, emailAuthentication);
+          logger.green("[POST] 인증 코드 전송 성공.");
           res.status(200).json({
             status: 200,
             message: "전송 성공."
@@ -205,11 +213,13 @@ const sendAuthCode = async (req: Request, res: Response) => {
         return;
       }
     })
-    .catch((err) => console.log(err));
-  res.status(200).json({
-    status: 200,
-    message: "전송 성공."
-  });
+    .catch((err) => {
+      logger.red("[POST] 인증 코드 전송 서버 오류.", err.message);
+      res.status(500).json({
+        status: 500,
+        message: "서버 오류."
+      });
+    });
 };
 
 export default {
