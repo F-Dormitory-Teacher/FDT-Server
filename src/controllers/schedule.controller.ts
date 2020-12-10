@@ -16,6 +16,7 @@ export const turnOnSchedule = (req: Request, res: Response) => {
     }
     schedule = autoSchedule();
     logger.green("[POST] 스케줄 실행 성공.");
+    logger.yellow("매 분 10초 일때 출석 리스트 작성", "(30초 초과시 NIGHT, 30초 미만시 MORNING)");
     res.status(200).json({
       status: 200,
       message: "스케쥴 실행 성공."

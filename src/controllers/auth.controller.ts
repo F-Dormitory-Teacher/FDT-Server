@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from "uuid";
 import sendEmail from "../lib/util/sendEmail";
 import { createToken } from "../lib/token";
 import AuthRequest from "../type/AuthRequest";
+import * as bcrypt from "bcryptjs";
 
 const register = async (req: Request, res: Response) => {
   if (!validateRegister(req, res)) return;
@@ -52,7 +53,7 @@ const register = async (req: Request, res: Response) => {
     user.email = body.email;
     user.studentId = body.studentId;
     user.name = body.name;
-    user.pw = body.pw;
+    user.pw = bcrypt.hashSync(body.pw);
 
     userRepo.save(user);
 
@@ -86,15 +87,15 @@ const login = async (req: Request, res: Response) => {
 
   try {
     const userRepo = getRepository(User);
-    const user: User | undefined = await userRepo.findOne({ email, pw });
+    const user: User | undefined = await userRepo.findOne({ email });
 
-    if (!user) {
-      logger.yellow("[POST] 회원가입 인증 안된 이메일.");
+    if (!user && !bcrypt.compareSync(pw, user.pw)) {
       res.status(404).json({
         message: "일치하는 계정을 찾을 수 없음."
       });
       return;
     }
+
     logger.green("[POST] 로그인 성공.");
     res.status(200).json({
       status: 200,

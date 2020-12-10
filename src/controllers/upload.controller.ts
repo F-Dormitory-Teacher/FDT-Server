@@ -9,7 +9,6 @@ const upload = async (req: any, res: Response) => {
 
     if (reqFiles) {
       reqFiles.forEach(async (reqFile: any) => {
-        console.log(reqFile);
         files.push(reqFile.filename);
       });
 

@@ -174,10 +174,15 @@ const createAttend = async (req: AuthRequest, res: Response) => {
 
     const attendRepo = getRepository(Attendance);
     const isExist = await attendRepo.findOne({ where: { user, date: moment().format("YYYY-MM-DD") } });
-    console.log(isExist);
-    console.log(user, moment().format("YYYY-MM-DD"));
 
-    if (isExist && isExist.status !== AttendStatus.NONE) {
+    if (!isExist) {
+      logger.yellow("[POST]노드 스케쥴러에서 생성된 후에 가입한 유저.");
+      return res.status(409).json({
+        status: 404,
+        message: "출석 리스트에 없음"
+      });
+    }
+    if (isExist.status !== AttendStatus.NONE) {
       logger.yellow("[POST] 이미 출석체크된 유저.");
       return res.status(409).json({
         status: 409,
@@ -200,14 +205,14 @@ const createAttend = async (req: AuthRequest, res: Response) => {
           : AttendStatus.TARDY;
     }
 
-    const attend: Attendance = new Attendance();
+    // const attend: Attendance = new Attendance();
 
-    attend.user = user;
-    attend.type = type;
-    attend.date = today;
-    attend.status = status;
+    // attend.user = user;
+    // attend.type = type;
+    // attend.date = today;
+    isExist.status = status;
 
-    await attendRepo.save(attend);
+    await attendRepo.save(isExist);
 
     logger.green("[POST] 출석체크 성공.");
     return res.status(200).json({
@@ -230,14 +235,14 @@ const createAttendInit = async (date: Date, type: AttendType) => {
 
     const attendRepo = getRepository(Attendance);
     const attends: Attendance[] = [];
-    console.log(users);
+
     users.map((user: User, idx: number) => {
       const attend: Attendance = new Attendance();
       attend.user = user;
       attend.status = AttendStatus.NONE;
       attend.date = date;
       attend.type = type;
-      console.log(11);
+
       attends.push(attend);
     });
     await attendRepo.save(attends);
